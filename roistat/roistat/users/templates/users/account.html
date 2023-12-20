@@ -1,0 +1,46 @@
+{% extends "web/base.html" %}
+{% block content %}
+<article>
+<h1 class="main_title">Личный кабинет</h1>
+    <p><b>Логин:</b> {{ user.username }}</p>
+    <p><b>Имя:</b> {{ user.first_name }}</p>
+    <p><b>Адрес электронной почты:</b> {{ user.email }}</p>
+    {% if user.userdata.api_key %}
+    <p><b>API-ключ Roistat:</b> {{ user.userdata.api_key }}</p>
+    {% endif %}
+    <hr><br>
+    <span class="h3_title">Обновить данные</span><br><br>
+    <form method="POST">
+        {% csrf_token %}
+        <p>
+            {{ u_form.first_name.label }}<br>
+            {{ u_form.first_name }}<br>
+            {% for error in u_form.first_name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ u_form.email.label }}<br>
+            {{ u_form.email }}<br>
+            {% for error in u_form.email.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ u_form.password.label }}<br>
+            {{ u_form.password }}<br>
+            {% for error in u_form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ a_form.api_key.label }}<br>
+            {{ a_form.api_key }}<br>
+            {% for error in u_form.api_key.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <button type="submit" class="confirm_but">Обновить</button>
+    </form>
+</article>
+{% endblock content %}

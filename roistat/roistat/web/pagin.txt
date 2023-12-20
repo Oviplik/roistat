@@ -1,0 +1,26 @@
+{% if request.GET.calls %}&calls={{ request.GET.calls }}{% endif %}
+{% load i18n %}
+ <ul>
+     {% if  paginator.has_previous %}
+        <li>
+            <a class="Next" href="?page={{ paginator.previous_page_number }}{% if request.GET.calls %}&calls=
+                      {{request.GET.calls }}{% endif %}">{% trans 'Предыдущая' %}
+            </a>
+          </li>
+       {% endif %}
+       {% for n in paginator.paginator.page_range %}
+            {% if n > paginator.number|add:-4 and n < paginator.number|add:4 %}
+                  <li class='{% if n == paginator.number %}active{% else %}no-active{% endif %}'>
+                        <a href='?page={{ n }}{% if request.GET.calls %}&calls={{ request.GET.calls }}{% endif %}'>{{ n }}</a>
+                   </li>
+              {% endif %}
+        {% endfor %}
+
+        {% if paginator.has_next %}
+            <li>
+                 <a class="Next" href="?page=
+                               {{ paginator.next_page_number }}{% if request.GET.calls %}&calls={{ request.GET.calls }}{% endif %}">
+                                     {% trans 'Следующая' %}</a>
+            </li>
+         {% endif %}
+</ul>

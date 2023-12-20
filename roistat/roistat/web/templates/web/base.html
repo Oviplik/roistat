@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'css/style.css'%}" type="text/css">
+
+    <meta charset="UTF-8">
+        {%if title%}
+        <title>{{title}}</title>
+        {%else%}
+        <title>Roistat Аналитик</title>
+        {%endif%}
+    </head>
+    <body>
+    <header><a href="/" title="На главную"><div id="header_logo"></div></a><div id="header_text_logo">Аналитик</div>
+        <div class="space_string"></div>
+        <div id="main_menu"><a href="{% url 'index' %}">Начать работать</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'account' %}">Личный кабинет</a> <a href="{% url 'logout' %}">Выйти</a>
+            {% else %}
+            <a href="{% url 'register' %}">Регистрация</a> <a href="{% url 'login' %}">Авторизация</a>
+            {% endif %}
+        </div>
+    </header>
+
+
+        {% if messages %}
+        	{% for message in messages %}
+            	{{ message }}
+        	{% endfor %}
+        {% endif %}
+        {%block content%} {%endblock%}
+
+    </body>
+</html>

@@ -1,0 +1,63 @@
+{% extends "web/base.html" %}
+{% block content %}
+<article>
+<h1 class="main_title">Регистрация нового пользователя</h1>
+<form method="POST">
+    {% csrf_token %}
+        <span style="color: red;">*</span> - Обязательные для заполнения поля
+        <p>
+            <span style="color: red;">*</span>{{ form.username.label }}<br>
+            {{ form.username }}<br>
+            <p>Не более 16 символов. Только латинские буквы, цифры и символы @/./+/-/_.</p>
+            {% for error in form.username.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            <span style="color: red;">*</span>{{ form.first_name.label }}<br>
+            {{ form.first_name }}<br>
+            <p>Только латиские буквы.</p>
+            {% for error in form.first_name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            <span style="color: red;">*</span>{{ form.email.label }}<br>
+            {{ form.email }}<br>
+            {% for error in form.email.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            <span style="color: red;">*</span>{{ form.password1.label }}<br>
+            {{ form.password1 }}<br>
+            <p>Ваш пароль не должен быть похожим на другую введенную информацию.<br>
+            Ваш пароль должен содержать не менее 8 символов.<br>
+            Не рекомендуем повторно использовать ваши пароли от других приложений и сайтов.<br>
+            Ваш пароль не может состоять только из цифр.</p>
+            {% for error in form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            <span style="color: red;">*</span>{{ form.password2.label }}<br>
+            {{ form.password2 }}<br>
+            <p>Введите тот же пароль, что и раньше, для проверки.</p>
+            {% for error in form.password2.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.api_key.label }}<br>
+            {{ form.api_key }}<br>
+            {% for error in form.api_key.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+    <div>
+        <button type="submit" class="confirm_but">Регистрация</button>
+    </div>
+    </fieldset>
+</form>
+</article>
+{% endblock content %}

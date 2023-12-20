@@ -1,0 +1,139 @@
+{% extends "web/base.html" %}
+{% block content %}
+<article>
+<h1 class="main_title">Анализ звонков</h1>
+{% if user.userdata.api_key %}
+<form action="{% url 'index' %}" method="POST" accept-charset="utf-8">
+{% csrf_token %}
+<p>API-ключ</p><input type="text" required class="text-field" size="33" value="{{ user.userdata.api_key }}" name="roistat_api_connect"> <button type="submit" class="confirm_but" style="margin-left: 25px;" value="{{ user.userdata.api_key }}">Загрузить Roistat проекты</button>
+</form><br>{% if error_message_api %}{{ error_message_api }}{% endif %}<br>
+{% else %}
+<form action="{% url 'index' %}" method="POST" accept-charset="utf-8">
+{% csrf_token %}
+<p>API-ключ</p><input type="text" required name="roistat_api_connect" class="text-field" size="33"> <button type="submit" class="confirm_but" style="margin-left: 25px;">Загрузить Roistat проекты</button>
+</form><br>{% if error_message_api %}{{ error_message_api }}{% endif %}<br>
+{% endif %}
+
+{% if form %}
+<form action="{% url 'index' %}" method="POST" accept-charset="utf-8" enctype="multipart/form-data">
+{% csrf_token %}
+<p>Список проектов, доступных пользователю</p>
+<select class="text-field" name="num_project"/>
+{% for key,value in projects.items %}
+    <option value="{{ key }}">{{ value }}</option>
+{% endfor %}
+</select><br><br>
+
+<p>Период, за который необходимо анализировать данные по звонкам</p>
+<table>
+    <tr style="text-align: center;">
+        <td>
+            {{ form.date_start.label }} - {{ form.date_start }}<br>
+            {% for error in form.date_start.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </td>
+        <td>
+            {{ form.date_end.label }} - {{ form.date_end }}<br>
+            {% for error in form.date_end.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </td>
+    </tr>
+    <tr><td></td><td></td></tr>
+    <tr><td colspan="2"><small>Оставтье поля пустыми, если нужно проанализировать данные за весь период</small></td></tr>
+</table><br>
+
+<p>Выберите Excel-файл с номерами телефонов для сравнения</p>
+<p>
+    {{ form.excel_file }}<br>
+    {% if error_message %}
+        <span style="color: red;">[{{ error_message }}]</span>
+    {% endif %}
+</p><br>
+
+<p>Укажите диапазон ячеек с номерами телефонов в Excel-файле</p>
+<div style="width: 400px">
+<table style="margin-left: 30%;">
+    <tr>
+        <td>
+            {{ form.range_cells_start }} :<br>
+            {% if error_message_range %}
+                <span style="color: red;">[{{ error_message_range }}]</span>
+            {% endif %}
+        </td>
+        <td>
+            {{ form.range_cells_end }}<br>
+            {% if error_message_range %}
+                <span style="color: red;">[{{ error_message_range }}]</span>
+            {% endif %}
+        </td>
+    </tr>
+
+</table>
+</div>
+<br>
+<p>Отобразить только</p>
+<p>
+    <label for="id_uniq_num_0"><input type="radio" name="uniq_num" value="uniq" class="Radio" default="uniq" checked required aria-invalid="true" id="id_uniq_num_0">
+ Уникальные номера телефонов</label>
+
+    <label for="id_uniq_num_1"><input type="radio" name="uniq_num" value="nouniq" class="Radio" default="uniq" required aria-invalid="true" id="id_uniq_num_1">
+ Повторяющиеся номера телефонов</label>
+
+</p><br>
+
+<input type="submit" value="Поехали" class="confirm_but">
+</form>
+{% endif %}
+{% if excel_save %}
+<br>
+<hr>
+<br>
+<span class="h3_title">Название проекта: {{ name_of_project }}</span>
+
+<form action="/" method="get" style="float: right;">
+<input type="submit" name="excel_save" class="confirm_but" value="Сохрнаить результат в Excel-файл" />
+</form>
+
+
+<div class="results">
+
+{% for i in paginator %}
+    {{ i }}<br>
+{% endfor %}
+
+</div>
+{% if paginator %}
+{% load i18n %}
+ <ul class="paginator">
+     {% if  paginator.number > 4 %}
+        <li>
+            <a class="Next" href="?page=1{% if request.GET.calls %}&calls=
+                      {{request.GET.calls }}{% endif %}">{% trans 'Начало' %}
+            </a>
+          </li>
+       {% endif %}
+       {% for n in paginator.paginator.page_range %}
+            {% if n > paginator.number|add:-4 and n < paginator.number|add:4 %}
+                  <li class='{% if n == paginator.number %}active{% else %}no-active{% endif %}'>
+                        <a href='?page={{ n }}{% if request.GET.calls %}&calls={{ request.GET.calls }}{% endif %}'>{{ n }}</a>
+                   </li>
+              {% endif %}
+        {% endfor %}
+
+        {% if paginator.has_next %}
+            <li>
+                 <a class="Next" href="?page=
+                               {{ paginator.paginator.num_pages }}{% if request.GET.calls %}&calls={{ request.GET.calls }}{% endif %}">
+                                     {% trans 'Последняя' %}</a>
+            </li>
+
+         {% endif %}
+
+</ul>
+{% endif %}
+{% endif %}
+
+</article>
+{% endblock content %}
