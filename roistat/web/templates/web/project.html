@@ -1,0 +1,90 @@
+{% extends "web/base.html" %}
+{% block content %}
+<article>
+<h1 class="main_title">Анализ звонков</h1>
+
+{% if api_key %}
+<form method="POST" action="{% url 'project' %}" accept-charset="utf-8" enctype="multipart/form-data">
+{% csrf_token %}
+    <p>API-ключ</p><input type="text" readonly required value="{{ api_key }}" name="roistat_api_connect" class="text-field" size="33" style="text-decoration: line-through;"><a href="{% url 'index' %}" class="confirm_but_a" style="margin-left: 25px;">Изменить Api-ключ</a>
+<br>
+<div style="display: none"><input type="text" name="project_names" value="{{ projects }}"></input></div>
+<p>Список проектов, доступных пользователю</p>
+<select class="text-field" name="num_project"/>
+{% for key,value in projects.items %}
+    <option value="{{ key }}">{{ value }}</option>
+{% endfor %}
+</select><br><br>
+
+<p>Период, за который необходимо анализировать данные по звонкам</p>
+<table>
+    <tr style="text-align: center;">
+        <td>
+            {{ form.date_start.label }} - {{ form.date_start }}<br>
+            {% for error in form.date_start.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </td>
+        <td>
+            {{ form.date_end.label }} - {{ form.date_end }}<br>
+            {% for error in form.date_end.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </td>
+    </tr>
+    <tr><td></td><td></td></tr>
+    <tr><td colspan="2"><small>Оставтье поля пустыми, если нужно проанализировать данные за весь период</small></td></tr>
+</table><br>
+
+<p>Выберите Excel-файл с номерами телефонов для сравнения</p>
+<p>
+    {{ form.excel_file }}<br>
+    {% if error_message %}
+        <span style="color: red;">[{{ error_message }}]</span>
+    {% endif %}
+</p><br>
+<input type="submit" value="Поехали" class="confirm_but" onclick="goload()">
+</form>
+
+
+{% if len_list_order %}
+<br>
+<hr>
+<br>
+<span class="h3_title">Название проекта: {{ name_project }}</span>
+
+<div class="results">
+<p>Количество заявок в разделе «Управление заявками без CRM» на Roistat: {{ len_common_list }} шт.</p>
+<p>Количество оплаченных заявок из Excel-файла: {{ len_list_call }} шт.</p>
+<p>Количество пересечений по номерам телефонов из Excel-файла и Roistat: {{ len_list_order }} шт.</p>
+</div>
+<div class="btn_under_results">
+<form method="get">
+<input type="submit" name="excel_save" class="confirm_but" value="Сохрнаить результат в Excel-файл">
+</form>
+<form method="get">
+<input type="submit" name="roistat_change_orders" class="confirm_but" value="Обновить статус сделок на Roistat" onclick="goload()">
+</form>
+</div>
+{% else %}
+    {% if result %}
+        <div class="results">
+            <span>Ничего нет...</span>
+        </div>
+    {% endif %}
+{% endif %}
+{% else %}
+<form action="{% url 'index' %}" method="POST" accept-charset="utf-8">
+{% csrf_token %}
+<p>API-ключ</p><input type="text" required name="roistat_api_connect" class="text-field" size="33"> <button type="submit" class="confirm_but" style="margin-left: 25px;" onclick="goload()">Загрузить Roistat проекты</button>
+</form><br>{% if error_message_api %}{{ error_message_api }}{% endif %}<br><span style="color: green;">{% if status_roistat_change %}{{ status_roistat_change }}{% endif %}</span>
+{% endif %}
+</article>
+<script>
+function goload() {
+    window.addEventListener("beforeunload", function(e){
+       openModalWin()
+    })
+}
+</script>
+{% endblock content %}

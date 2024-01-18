@@ -1,0 +1,25 @@
+{% extends "web/base.html" %}
+{% block content %}
+<article>
+<h1 class="main_title">Анализ звонков</h1>
+{% if user.userdata.api_key %}
+<form action="{% url 'index' %}" method="POST" accept-charset="utf-8">
+{% csrf_token %}
+<p>API-ключ</p><input type="text" required class="text-field" size="33" value="{{ user.userdata.api_key }}" name="roistat_api_connect"> <button type="submit" class="confirm_but" style="margin-left: 25px;" value="{{ user.userdata.api_key }}" onclick="goload()">Загрузить Roistat проекты</button>
+</form><br>{% if error_message_api %}{{ error_message_api }}{% endif %}<br>
+{% else %}
+<form action="{% url 'index' %}" method="POST" accept-charset="utf-8">
+{% csrf_token %}
+<p>API-ключ</p><input type="text" required name="roistat_api_connect" class="text-field" size="33"> <button type="submit" class="confirm_but" style="margin-left: 25px;" onclick="goload()">Загрузить Roistat проекты</button>
+</form><br>{% if error_message_api %}{{ error_message_api }}{% endif %}<br>
+{% endif %}
+</article>
+
+<script>
+function goload() {
+    window.addEventListener("beforeunload", function(e){
+       openModalWin()
+    })
+}
+</script>
+{% endblock content %}
